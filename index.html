@@ -50,38 +50,12 @@
 <div class="container">
     <h2>账号检测器</h2>
     <input type="text" id="username" placeholder="请输入用户名">
-    <button onclick="checkAccount()">serv00检测账户状态</button>
+    <button onclick="checkAccount()">检测账户状态</button>
     
     <div class="result" id="result"></div>
 </div>
 
-<script>
-    function checkAccount() {
-        const username = document.getElementById('username').value;
-        const resultDiv = document.getElementById('result');
-        
-        if (username) {
-            // 模拟 API 调用
-            const apiUrl = `https://s00test.64t76dee9sk5.workers.dev/?username=${username}`;
-            
-            fetch(apiUrl)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        resultDiv.innerHTML = `<p>账号状态：${data.message}</p>`;
-                    } else {
-                        resultDiv.innerHTML = `<p>检测失败，请重试。</p>`;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    resultDiv.innerHTML = `<p>发生错误，请稍后再试。</p>`;
-                });
-        } else {
-            resultDiv.innerHTML = `<p>请输入用户名。</p>`;
-        }
-    }
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
