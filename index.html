@@ -1,7 +1,87 @@
-<div class="panel">
-    <h2>面板标题</h2>
-    <p>这是面板内容。</p>
-</div>
+<!DOCTYPE html>
+<html lang="zh">
 <head>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号检测器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
 </head>
+<body>
+
+<div class="container">
+    <h2>账号检测器</h2>
+    <input type="text" id="username" placeholder="请输入用户名">
+    <button onclick="checkAccount()">serv00检测账户状态</button>
+    
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    function checkAccount() {
+        const username = document.getElementById('username').value;
+        const resultDiv = document.getElementById('result');
+        
+        if (username) {
+            // 模拟 API 调用
+            const apiUrl = `https://s00test.64t76dee9sk5.workers.dev/?username=${username}`;
+            
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        resultDiv.innerHTML = `<p>账号状态：${data.message}</p>`;
+                    } else {
+                        resultDiv.innerHTML = `<p>检测失败，请重试。</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultDiv.innerHTML = `<p>发生错误，请稍后再试。</p>`;
+                });
+        } else {
+            resultDiv.innerHTML = `<p>请输入用户名。</p>`;
+        }
+    }
+</script>
+
+</body>
+</html>
