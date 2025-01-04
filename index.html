@@ -43,12 +43,11 @@
         .result {
             margin-top: 20px;
         }
-        .account-list {
-            display: none; /* 默认隐藏账户列表 */
+        iframe {
+            width: 100%;
+            height: 400px; /* 可根据需要调整高度 */
+            border: none;
             margin-top: 20px;
-        }
-        .account-list.visible {
-            display: block; /* 显示账户列表 */
         }
     </style>
 </head>
@@ -57,70 +56,29 @@
 <div class="container">
     <h2>账号检测器</h2>
     <input type="text" id="username" placeholder="请输入用户名">
-    <button onclick="checkAccount()">检测账户状态</button>
-    <button onclick="toggleAccountList()">显示/隐藏账户列表</button>
+    <button onclick="openWebsite()">检测账户状态</button>
     
     <div class="result" id="result"></div>
-    <div class="account-list" id="accountList">
-        <h3>账户列表</h3>
-        <ul id="listItems"></ul>
-    </div>
+    <iframe id="websiteFrame" src="" style="display:none;"></iframe>
 </div>
 
 <script>
-    const accounts = new Set(); // 使用 Set 来存储唯一的用户名
-
-    function checkAccount() {
+    function openWebsite() {
         const username = document.getElementById('username').value.trim();
         const resultDiv = document.getElementById('result');
-        
-        if (username) {
-            // 检查用户名是否已存在于列表中
-            if (accounts.has(username)) {
-                resultDiv.innerHTML = `<p>账号 ${username} 已存在于列表中。</p>`;
-                return; // 如果已存在，直接返回
-            }
+        const websiteFrame = document.getElementById('websiteFrame');
 
-            // 模拟 API 返回的结果
-            const mockResponse = {
-                status: "success",
-                message: `账号 ${username} 状态正常`
-            };
+        if (username) {
+            // 构建完整链接
+            const apiUrl = `https://s00test.64t76dee9sk5.workers.dev/?username=${username}`;
             
-            // 显示结果
-            resultDiv.innerHTML = `<p>${mockResponse.message}</p>`;
-            
-            // 更新账户列表
-            updateAccountList(username);
+            // 显示 iframe 并加载链接
+            websiteFrame.src = apiUrl; // 将 iframe 的 src 设置为完整链接
+            websiteFrame.style.display = 'block'; // 显示 iframe
+            resultDiv.innerHTML = ""; // 清空结果区域
         } else {
             resultDiv.innerHTML = `<p>请输入用户名。</p>`;
         }
-    }
-
-    function updateAccountList(username) {
-        accounts.add(username); // 将用户名添加到 Set 中
-
-        const listItems = document.getElementById('listItems');
-        
-        // 创建新的列表项并添加点击事件
-        const newItem = document.createElement('li');
-        newItem.textContent = username; // 添加新用户名到列表
-        newItem.onclick = function() { showAccountStatus(username); }; // 点击时显示状态
-        listItems.appendChild(newItem);
-    }
-
-    function showAccountStatus(username) {
-        const resultDiv = document.getElementById('result');
-        
-        // 模拟显示已检测账户的状态
-        resultDiv.innerHTML = `<p>显示 ${username} 的状态...</p>`;
-        
-        // 在这里可以添加逻辑以实际获取该账户的状态
-    }
-
-    function toggleAccountList() {
-        const accountList = document.getElementById('accountList');
-        accountList.classList.toggle('visible'); // 切换账户列表的可见性
     }
 </script>
 
