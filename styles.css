@@ -1,0 +1,16 @@
+.panel {
+    border: 1px solid #007BFF;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.panel h2 {
+    color: #007BFF;
+}
+
+.panel p {
+    font-size: 14px;
+    color: #333;
+}
