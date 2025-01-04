@@ -68,11 +68,19 @@
 </div>
 
 <script>
+    const accounts = new Set(); // 使用 Set 来存储唯一的用户名
+
     function checkAccount() {
         const username = document.getElementById('username').value.trim();
         const resultDiv = document.getElementById('result');
         
         if (username) {
+            // 检查用户名是否已存在于列表中
+            if (accounts.has(username)) {
+                resultDiv.innerHTML = `<p>账号 ${username} 已存在于列表中。</p>`;
+                return; // 如果已存在，直接返回
+            }
+
             // 模拟 API 返回的结果
             const mockResponse = {
                 status: "success",
@@ -90,10 +98,24 @@
     }
 
     function updateAccountList(username) {
+        accounts.add(username); // 将用户名添加到 Set 中
+
         const listItems = document.getElementById('listItems');
+        
+        // 创建新的列表项并添加点击事件
         const newItem = document.createElement('li');
         newItem.textContent = username; // 添加新用户名到列表
+        newItem.onclick = function() { showAccountStatus(username); }; // 点击时显示状态
         listItems.appendChild(newItem);
+    }
+
+    function showAccountStatus(username) {
+        const resultDiv = document.getElementById('result');
+        
+        // 模拟显示已检测账户的状态
+        resultDiv.innerHTML = `<p>显示 ${username} 的状态...</p>`;
+        
+        // 在这里可以添加逻辑以实际获取该账户的状态
     }
 
     function toggleAccountList() {
