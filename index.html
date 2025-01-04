@@ -3,84 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>账号检测器</title>
+    <title>serv00账号检测器</title>
     <style>
         body {
+            background-color: #f5f5dc; /* 奶白色 */
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
+            box-sizing: border-box;
+            max-width: 600px; /* 限制面板宽度 */
+            margin-left: auto; /* 居中对齐 */
+            margin-right: auto; /* 居中对齐 */
+            border-radius: 8px; /* 圆角 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 添加阴影 */
         }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        h1 {
+            text-align: center;
         }
-        h2 {
-            color: #333;
+        #accountList {
+            display: none; /* 默认隐藏列表 */
+            margin-top: 20px;
         }
-        input[type="text"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
         }
         button {
-            padding: 10px 15px;
-            background-color: #007BFF;
+            background-color: green; /* 按键绿色 */
             color: white;
             border: none;
-            border-radius: 3px;
+            padding: 5px 10px;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #0056b3;
+        button.delete {
+            background-color: red; /* 删除按钮红色 */
         }
-        .result {
+        #result {
             margin-top: 20px;
+            display: block; /* 显示结果区域 */
+            font-size: 18px; /* 加大字体 */
+            overflow-y: auto; /* 自动滚动条 */
+            max-height: 500px; /* 最大高度限制 */
         }
         iframe {
             width: 100%;
-            height: 400px; /* 可根据需要调整高度 */
-            border: none;
-            margin-top: 20px;
+            height: 500px; /* 设置高度 */
+            border: none; /* 去掉边框 */
         }
     </style>
 </head>
 <body>
+    <h1>serv00账号检测器</h1>
+    <input type="text" id="usernameInput" placeholder="输入账户名" style="width: 80%; padding: 10px; margin-bottom: 10px;">
+    <button onclick="addAccount()">添加账户</button>
+    <button onclick="toggleList()">显示/隐藏列表</button>
+    <button onclick="checkAllAccounts()">检测全部账号</button> <!-- 新增的按钮 -->
 
-<div class="container">
-    <h2>账号检测器</h2>
-    <input type="text" id="username" placeholder="请输入用户名">
-    <button onclick="openWebsite()">检测账户状态</button>
-    
-    <div class="result" id="result"></div>
-    <iframe id="websiteFrame" src="" style="display:none;"></iframe>
-</div>
+    <div id="accountList"></div>
+    <div id="result"></div> <!-- 用于显示内容的区域 -->
 
-<script>
-    function openWebsite() {
-        const username = document.getElementById('username').value.trim();
-        const resultDiv = document.getElementById('result');
-        const websiteFrame = document.getElementById('websiteFrame');
+    <script>
+        let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+        let results = []; // 用于存储所有检测结果
 
-        if (username) {
-            // 构建完整链接
-            const apiUrl = `https://s00test.64t76dee9sk5.workers.dev/?username=${username}`;
-            
-            // 显示 iframe 并加载链接
-            websiteFrame.src = apiUrl; // 将 iframe 的 src 设置为完整链接
-            websiteFrame.style.display = 'block'; // 显示 iframe
-            resultDiv.innerHTML = ""; // 清空结果区域
-        } else {
-            resultDiv.innerHTML = `<p>请输入用户名。</p>`;
+        function toggleList() {
+            const listDiv = document.getElementById('accountList');
+            listDiv.style.display = listDiv.style.display === 'none' ? 'block' : 'none';
+            displayAccounts();
         }
-    }
-</script>
 
+        function addAccount() {
+            const usernameInput = document.getElementById('usernameInput');
+            const username = usernameInput.value.trim();
+
+            if (username === "") {
+                alert("请输入有效的账户名");
+                return;
+            }
+
+            if (accounts.includes(username)) {
+                alert("账户名已存在，请输入不同的账户名");
+                return;
+            }
+
+            accounts.push(username);
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            usernameInput.value = '';
+            displayAccounts();
+        }
+
+        function displayAccounts() {
+            const listDiv = document.getElementById('accountList');
+            listDiv.innerHTML = '';
+
+            accounts.forEach((account, index) => {
+                const accountItem = document.createElement('div');
+                accountItem.className = 'account-item';
+                accountItem.innerHTML = `
+                    <span onclick="loadContent('${account}')" style="cursor:pointer;">${account}</span> 
+                    <button class="delete" onclick="removeAccount(${index})">删除</button>
+                `;
+                listDiv.appendChild(accountItem);
+            });
+        }
+
+        function loadContent(account) {
+           const iframe = document.createElement('iframe'); // 创建新的iframe
+           
+           // 使用提供的API链接
+           const apiUrl = `https://s00test.64t76dee9sk5.workers.dev/?username=${account}`;
+           
+           iframe.src = apiUrl; // 设置iframe的src为API链接
+           document.getElementById('result').appendChild(iframe); // 将iframe添加到结果区域
+           results.push(`检测 ${account} 的结果：<br><iframe src="${apiUrl}" style="width:100%; height:auto;" frameborder="0"></iframe><br>`); // 保存结果
+           updateResults(); // 更新显示
+       }
+
+       function checkAllAccounts() {
+           const resultDiv = document.getElementById('result');
+           resultDiv.innerHTML = ''; // 清空之前的结果
+           results = []; // 清空之前的结果记录
+
+           accounts.forEach((account, index) => {
+               setTimeout(() => {
+                   loadContent(account); // 加载每个账户的内容
+               }, index * 2000); // 每个请求之间延迟2秒
+           });
+       }
+
+       function updateResults() {
+           const resultDiv = document.getElementById('result');
+           resultDiv.innerHTML = results.join(''); // 显示所有结果
+       }
+
+       function removeAccount(index) {
+           accounts.splice(index, 1);
+           localStorage.setItem('accounts', JSON.stringify(accounts));
+           displayAccounts();
+       }
+
+       // 初始化显示
+       displayAccounts();
+   </script>
 </body>
 </html>
