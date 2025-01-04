@@ -43,6 +43,12 @@
         .result {
             margin-top: 20px;
         }
+        iframe {
+            width: 100%;
+            height: 400px; /* 可根据需要调整高度 */
+            border: none;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -50,25 +56,26 @@
 <div class="container">
     <h2>账号检测器</h2>
     <input type="text" id="username" placeholder="请输入用户名">
-    <button onclick="showAccountStatus()">检测账户状态</button>
+    <button onclick="openWebsite()">检测账户状态</button>
     
     <div class="result" id="result"></div>
+    <iframe id="websiteFrame" src="" style="display:none;"></iframe>
 </div>
 
 <script>
-    function showAccountStatus() {
+    function openWebsite() {
         const username = document.getElementById('username').value.trim();
         const resultDiv = document.getElementById('result');
-        
+        const websiteFrame = document.getElementById('websiteFrame');
+
         if (username) {
-            // 假设的账户状态
-            const mockResponse = {
-                status: "success",
-                message: `账号 ${username} 状态正常`
-            };
+            // 构建完整链接
+            const apiUrl = `https://s00test.64t76dee9sk5.workers.dev/?username=${username}`;
             
-            // 显示假设的结果
-            resultDiv.innerHTML = `<p>${mockResponse.message}</p>`;
+            // 显示 iframe 并加载链接
+            websiteFrame.src = apiUrl; // 将 iframe 的 src 设置为完整链接
+            websiteFrame.style.display = 'block'; // 显示 iframe
+            resultDiv.innerHTML = ""; // 清空结果区域
         } else {
             resultDiv.innerHTML = `<p>请输入用户名。</p>`;
         }
